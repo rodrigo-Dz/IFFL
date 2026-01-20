@@ -48,12 +48,12 @@ f_range_sorted = sort(f_range, rev=true)
 for (f_idx, f_val) in enumerate(f_range_sorted)    
     p_current[:f] = f_val
 
-    #= seq
+    # seq
     p_values = [
         p_current[:m1], p_current[:m2], p_current[:mx],
         p_current[:g], p_current[:d], p_current[:g0],
         p_current[:f], p_current[:A]
-    ]=#
+    ]
 
     # enz
     #=p_values = [
@@ -73,7 +73,7 @@ for (f_idx, f_val) in enumerate(f_range_sorted)
     sol = solve(prob, Tsit5(), abstol=1e-8, reltol=1e-6, saveat=0.05)
     
     times = sol.t
-    U1_concentration = sol[2, :]
+    U1_concentration = sol[1, :]
     
     mask = times .> 50.0
     times_steady = times[mask]
@@ -105,17 +105,32 @@ end
 
 
 p_current[:f] = 0
+# seq
 p_values = [
-        p_current[:k1], p_current[:k2], p_current[:mU],
-        p_current[:mX], p_current[:d], p_current[:f],
-        p_current[:A]
-    ]
+    p_current[:m1], p_current[:m2], p_current[:mx],
+    p_current[:g], p_current[:d], p_current[:g0],
+    p_current[:f], p_current[:A]
+]
+
+# enz
+#=p_values = [
+    p_current[:m1], p_current[:m2], p_current[:mx],
+    p_current[:g], p_current[:d], p_current[:r],
+    p_current[:f], p_current[:A]
+]=#
+
+# phos
+#=p_values = [
+    p_current[:k1], p_current[:k2], p_current[:mU],
+    p_current[:mX], p_current[:d], p_current[:f],
+    p_current[:A]
+]=#
 
 prob = ODEProblem(mm.IFFL, mm.u0, tspan, p_values)
 sol = solve(prob, Tsit5(), abstol=1e-8, reltol=1e-6, saveat=0.05)
 
 times = sol.t
-U1_concentration = sol[2, :]
+U1_concentration = sol[1, :]
 
 # Estado estacionario (después de 50s)
 mask = times .> 50.0
@@ -190,11 +205,26 @@ for (m1_idx, m1_val) in enumerate(m1_range)
     
     for (f_idx, f_val) in enumerate(f_range)
         p_current[:f] = f_val
+        # seq
         p_values = [
+            p_current[:m1], p_current[:m2], p_current[:mx],
+            p_current[:g], p_current[:d], p_current[:g0],
+            p_current[:f], p_current[:A]
+        ]
+
+        # enz
+        #=p_values = [
+            p_current[:m1], p_current[:m2], p_current[:mx],
+            p_current[:g], p_current[:d], p_current[:r],
+            p_current[:f], p_current[:A]
+        ]=#
+
+        # phos
+        #=p_values = [
             p_current[:k1], p_current[:k2], p_current[:mU],
             p_current[:mX], p_current[:d], p_current[:f],
             p_current[:A]
-        ]
+        ]=#
         
         prob = ODEProblem(mm.IFFL, mm.u0, tspan, p_values)
         sol = solve(prob, Tsit5(), abstol=1e-8, reltol=1e-6, saveat=0.005)
@@ -202,7 +232,7 @@ for (m1_idx, m1_val) in enumerate(m1_range)
         times = sol.t
 
         mask = times .> 50.0
-        A_signal = (maximum(sol[2, mask]) - minimum(sol[2, mask]))/2
+        A_signal = (maximum(sol[1, mask]) - minimum(sol[1, mask]))/2
         A_ref = p_current[:A]
         dB = 20*log10(A_signal/A_ref)
 
@@ -266,17 +296,32 @@ A_range_sorted = sort(A_range, rev=true)
 for (A_idx, A_val) in enumerate(A_range_sorted)
     
     p_current[:A] = A_val
+    # seq
     p_values = [
+        p_current[:m1], p_current[:m2], p_current[:mx],
+        p_current[:g], p_current[:d], p_current[:g0],
+        p_current[:f], p_current[:A]
+    ]
+
+    # enz
+    #=p_values = [
+        p_current[:m1], p_current[:m2], p_current[:mx],
+        p_current[:g], p_current[:d], p_current[:r],
+        p_current[:f], p_current[:A]
+    ]=#
+
+    # phos
+    #=p_values = [
         p_current[:k1], p_current[:k2], p_current[:mU],
         p_current[:mX], p_current[:d], p_current[:f],
         p_current[:A]
-    ]
+    ]=#
     
     prob = ODEProblem(mm.IFFL, mm.u0, tspan, p_values)
     sol = solve(prob, Tsit5(), abstol=1e-8, reltol=1e-6, saveat=0.05)
     
     times = sol.t
-    U1_concentration = sol[2, :]
+    U1_concentration = sol[1, :]
     
     # Estado estacionario (después de 50s)
     mask = times .> 0.0
@@ -360,11 +405,26 @@ for (m1_idx, m1_val) in enumerate(m1_range)
     
     for (A_idx, A_val) in enumerate(A_range)
         p_current[:A] = A_val
+        # seq
         p_values = [
+            p_current[:m1], p_current[:m2], p_current[:mx],
+            p_current[:g], p_current[:d], p_current[:g0],
+            p_current[:f], p_current[:A]
+        ]
+
+        # enz
+        #=p_values = [
+            p_current[:m1], p_current[:m2], p_current[:mx],
+            p_current[:g], p_current[:d], p_current[:r],
+            p_current[:f], p_current[:A]
+        ]=#
+
+        # phos
+        #=p_values = [
             p_current[:k1], p_current[:k2], p_current[:mU],
             p_current[:mX], p_current[:d], p_current[:f],
             p_current[:A]
-        ]
+        ]=#
         
         prob = ODEProblem(mm.IFFL, mm.u0, tspan, p_values)
         sol = solve(prob, Tsit5(), abstol=1e-8, reltol=1e-6, saveat=0.005)
@@ -372,7 +432,7 @@ for (m1_idx, m1_val) in enumerate(m1_range)
         times = sol.t
 
         mask = times .> 50.0
-        A_signal = (maximum(sol[2, mask]) - minimum(sol[2, mask]))/2
+        A_signal = (maximum(sol[1, mask]) - minimum(sol[1, mask]))/2
         A_ref = p_current[:A]
         dB = 20*log10(A_signal/A_ref)
 
